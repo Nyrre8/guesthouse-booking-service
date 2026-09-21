@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Booking</title></head>
+<body>
+<nav><a th:href="@{/bookings}"> Back to bookings</a></nav>
+<h1 th:text="${booking.id != null} ? 'Edit booking' : 'New booking'"></h1>
+
+
+<div th:if="${booking.id == null and availableRooms == null}">
+    <h2>Choose date</h2>
+    <form action="/bookings/available-rooms" method="get">
+        <input type="date" name="checkIn" th:value="${checkIn}" required/>
+        <input type="date" name="checkOut" th:value="${checkOut}" required/>
+
+        <label>Amount of persons:</label>
+        <input type="number" name="numberOfPeople" min="1" max="4" required/>
+        <button type="submit">Search available rooms</button>
+    </form>
+</div>
+
+
+<div th:if="${availableRooms != null or booking.id != null}">
+    <h2 th:text="${booking.id != null} ? 'Change booking' : 'Choose customer and room'"></h2>
+
+    <form th:action="@{/bookings/save}" method="post" th:object="${booking}">
+        <input type="hidden" th:field="*{id}"/>
+
+        <label>Checkin:</label>
+        <input type="date" name="checkIn" th:value="${checkIn}" required/>
+        <input type="date" name="checkOut" th:value="${checkOut}" required/>
+
+
+        <label>Customer:</label>
+        <select th:field="*{customerId}" required>
+            <option value="">Choose customer</option>
+            <option th:each="customer : ${customers}"
+                    th:value="${customer.id}"
+                    th:text="${customer.name}">
+            </option>
+        </select>
+        <br/>
+
+        <label>Room:</label>
+        <select th:field="*{roomId}" required>
+            <option value="">Choose room</option>
+
+
+            <option th:if="${availableRooms != null}"
+                    th:each="room : ${availableRooms}"
+                    th:value="${room.id}"
+                    th:text="${room.name}">
+            </option>
+
+
+            <option th:if="${rooms != null}"
+                    th:each="room : ${rooms}"
+                    th:value="${room.id}"
+                    th:text="${room.name}">
+            </option>
+        </select>
+        <br/><br/>
+        <button type="submit">Save booking</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Customer</title></head>
+<body>
+<nav>
+    <a th:href="@{/}">Home</a> |
+    <a th:href="@{/rooms}">Room</a> |
+    <a th:href="@{/bookings}">Bookings</a>
+</nav>
+<h1>Customers</h1>
+
+<div th:if="${successMessage}" th:text="${successMessage}" style="color:green;"></div>
+<div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></div>
+
+<a th:href="@{/customers/new}">Add customer</a>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Handle customer</th>
+    </tr>
+    <tr th:each="customer : ${customers}">
+        <td th:text="${customer.name}"></td>
+        <td>
+            <a th:href="@{/customers/edit/{id}(id=${customer.id})}">Edit</a>
+            <form th:action="@{/customers/delete/{id}(id=${customer.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Remove customer?')">Remove</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

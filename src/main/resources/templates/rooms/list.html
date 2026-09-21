@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Room</title></head>
+
+<body>
+<nav>
+    <a th:href="@{/}">Home</a> |
+    <a th:href="@{/customers}">Customers</a> |
+    <a th:href="@{/bookings}">Bookings</a>
+</nav>
+<h1>Room</h1>
+
+<div th:if="${successMessage}" th:text="${successMessage}" style="color:green;"></div>
+<div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></div>
+
+<a th:href="@{/rooms/new}">Add room</a>
+
+<table border="1">
+    <tr>
+        <th>Room</th>
+        <th>Typ</th>
+        <th>Max personer</th>
+        <th>Handle room</th>
+    </tr>
+    <tr th:each="room : ${rooms}">
+        <td th:text="${room.name}"></td>
+        <td th:text="${room.roomType != null and room.roomType.name() == 'SINGLE'} ? 'Single room' : 'Double room'"></td>
+        <td th:text="${room.maxCapacity}"></td>
+        <td>
+            <a th:href="@{/rooms/edit/{id}(id=${room.id})}">Edit</a>
+            <form th:action="@{/rooms/delete/{id}(id=${room.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Remove room?')">Remove</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

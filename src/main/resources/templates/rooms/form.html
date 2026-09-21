@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Room</title></head>
+<body>
+<nav><a th:href="@{/rooms}">Back</a></nav>
+<h1 th:text="${room.id != null} ? 'Edit room' : 'New room'"></h1>
+
+<form th:action="@{/rooms/save}" method="post" th:object="${room}">
+    <input type="hidden" th:field="*{id}"/>
+    <label>Roomname:</label>
+    <input type="text" th:field="*{name}" required/>
+    <br/><br/>
+    <label>Room type:</label>
+    <select th:field="*{roomType}" required>
+        <option value="SINGLE">Single room</option>
+        <option value="DOUBLE">Double room</option>
+    </select>
+    <br/>
+
+    <div th:if="${room.roomType == null or room.roomType.toString() != 'SINGLE'}">
+        <label>Extra beds:</label>
+        <select th:field="*{extraBeds}">
+            <option value="0">None</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <br/>
+    </div>
+
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

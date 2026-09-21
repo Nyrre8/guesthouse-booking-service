@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Customer</title></head>
+<body>
+<nav><a th:href="@{/customers}">Back</a></nav>
+<h1 th:text="${customer.id != null} ? 'Edit customer' : 'New customer'"></h1>
+
+<form th:action="@{/customers/save/}" method="post" th:object="${customer}">
+    <input type="hidden" th:field="*{id}"/>
+    <label>Namn:</label>
+    <input type="text" th:field="*{name}" required/>
+    <br/><br/>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
