@@ -81,8 +81,7 @@ public class RoomServiceImplTest {
         verify(roomRepository).save(argThat(room ->
                 room.getName().equals("101") &&
                         room.getRoomType() == RoomType.SINGLE &&
-                        room.getExtraBeds() == 0
-        ))
+                        room.getExtraBeds() == 0));
     }
 
     @Test
