@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.ArgumentMatchers.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,13 +63,25 @@ public class RoomServiceImplTest {
         roomDTO.setName("101");
         roomDTO.setRoomType(RoomType.SINGLE);
         roomDTO.setExtraBeds(0);
+
+        Room savedRoom = new Room();
+        savedRoom.setId(1L);
+        savedRoom.setName("101");
+        savedRoom.setRoomType(RoomType.SINGLE);
+        savedRoom.setExtraBeds(0);
+
+        when(roomRepository.save(any(Room.class))).thenReturn(savedRoom);
+
         roomService.save(roomDTO);
 
         Room expectedRoom = new Room();
         expectedRoom.setName("101");
         expectedRoom.setRoomType(RoomType.SINGLE);
         expectedRoom.setExtraBeds(0);
-        verify(roomRepository).save(expectedRoom);
+        verify(roomRepository).save(argThat(room ->
+                room.getName().equals("101") &&
+                        room.getRoomType() == RoomType.SINGLE &&
+                        room.getExtraBeds() == 0));
     }
 
     @Test
