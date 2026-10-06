@@ -5,13 +5,15 @@ import com.example.guesthousebookingsystem.models.Room;
 import com.example.guesthousebookingsystem.repositories.RoomRepository;
 import com.example.guesthousebookingsystem.services.RoomService;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Service
 public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
+    private static final Logger log = LoggerFactory.getLogger(RoomServiceImpl.class);
 
     public RoomServiceImpl(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
@@ -48,7 +50,9 @@ public class RoomServiceImpl implements RoomService {
         } else {
             room.setExtraBeds(roomDTO.getExtraBeds());
         }
-        roomRepository.save(room);
+        Room saved = roomRepository.save(room);
+        log.info("Room {} saved (type {}, extra beds {})",
+                saved.getId(), saved.getRoomType(), saved.getExtraBeds());
     }
 
 /*
@@ -59,6 +63,6 @@ public class RoomServiceImpl implements RoomService {
 */
     @Override
     public void delete(Long id) {
-        roomRepository.deleteById(id);
+        roomRepository.deleteById(id);log.info("Room {} deleted", id);
     }
 }
