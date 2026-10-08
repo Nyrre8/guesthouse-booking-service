@@ -7,6 +7,8 @@ import com.example.guesthousebookingsystem.models.Room;
 import com.example.guesthousebookingsystem.repositories.BookingRepository;
 import com.example.guesthousebookingsystem.repositories.RoomRepository;
 import com.example.guesthousebookingsystem.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,6 +17,7 @@ import java.util.List;
 @Service
 public class BookingServiceImpl implements BookingService {
 
+    private static final Logger log = LoggerFactory.getLogger(BookingServiceImpl.class);
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
     private final CustomerServiceClient customerServiceClient;
@@ -51,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDTO save(BookingDTO bookingDTO) {
         if (!customerServiceClient.customerExists(bookingDTO.getCustomerId())) {
+            log.warn("Booking rejected: customer {} does not exist", bookingDTO.getCustomerId());
             throw new CustomerNotFoundException(
                     "Customer " + bookingDTO.getCustomerId() + " does not exist");
         }
@@ -62,6 +66,8 @@ public class BookingServiceImpl implements BookingService {
                 bookingDTO.getId()
         );
         if (conflict) {
+            log.warn("Booking rejected: room {} already booked between {} and {}",
+                    bookingDTO.getRoomId(), bookingDTO.getCheckIn(), bookingDTO.getCheckOut());
             throw new BookingConflictException("Room is not available for the selected dates");
         }
 
@@ -75,6 +81,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setRoomid(room.getId());
 
         Booking saved = bookingRepository.save(booking);
+        log.info("Booking {} saved for room {} ({} - {})",
+                saved.getId(), saved.getRoomid(), saved.getCheckIn(), saved.getCheckOut());
         return new BookingDTO(saved.getId(), saved.getCheckIn(), saved.getCheckOut(),
                 saved.getCustomerid(), saved.getRoomid());
     }
@@ -82,6 +90,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void delete(Long id) {
         bookingRepository.deleteById(id);
+        log.info("Booking {} deleted", id);
     }
 
     @Override
