@@ -1,6 +1,8 @@
 package com.example.guesthousebookingsystem.services;
 
 import com.example.guesthousebookingsystem.dtos.CustomerDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Service
 public class CustomerServiceClient {
-
+    private static final Logger log = LoggerFactory.getLogger(CustomerServiceClient.class);
     private final RestClient restClient;
 
     public CustomerServiceClient(RestClient customerRestClient) {
@@ -24,6 +26,7 @@ public class CustomerServiceClient {
                     .retrieve()
                     .body(new ParameterizedTypeReference<List<CustomerDTO>>() {});
         } catch (ResourceAccessException e) {
+            log.error("customer-service unreachable when fetching customers", e);
             throw new CustomerServiceUnavailableException("Kundtjänsten är inte tillgänglig just nu", e);
         }
     }
@@ -36,8 +39,10 @@ public class CustomerServiceClient {
                     .toBodilessEntity();
             return true;
         } catch (HttpClientErrorException.NotFound e) {
+            log.warn("Customer {} not found in customer-service", customerId);
             return false;
         } catch (ResourceAccessException e) {
+            log.error("customer-service unreachable when checking customer {}", customerId, e);
             throw new CustomerServiceUnavailableException("Kundtjänsten är inte tillgänglig just nu", e);
         }
     }
