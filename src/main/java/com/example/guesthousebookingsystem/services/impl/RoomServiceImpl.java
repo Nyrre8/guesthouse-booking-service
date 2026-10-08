@@ -54,13 +54,6 @@ public class RoomServiceImpl implements RoomService {
         log.info("Room {} saved (type {}, extra beds {})",
                 saved.getId(), saved.getRoomType(), saved.getExtraBeds());
     }
-
-/*
-    I save(...) sätts värdet rakt av: room.setExtraBeds(roomDTO.getExtraBeds()); (rad 45).
-            ◦
-    Här bör du lägga affärsregeln, t.ex. om roomType == SINGLE så sätt extraBeds = 0 eller kasta valideringsfel.
-
-*/
     @Override
     public void delete(Long id) {
         roomRepository.deleteById(id);log.info("Room {} deleted", id);
